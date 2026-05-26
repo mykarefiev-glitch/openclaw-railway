@@ -54,6 +54,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # so it's baked into the image and not hidden by the Railway volume mount.
 RUN npm install -g openclaw@${OPENCLAW_VERSION}
 
+# Google APIs for Node.js agents/tools
+RUN npm install -g \
+    googleapis \
+    @google/genai \
+    google-auth-library
+
 # Optional: Install Java + signal-cli for Signal channel support
 # Set INSTALL_SIGNAL_CLI=true in Railway build args if needed
 RUN if [ "$INSTALL_SIGNAL_CLI" = "true" ]; then \
