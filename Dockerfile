@@ -48,14 +48,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python Google Drive API libraries
-RUN apt-get update && apt-get install -y --no-install-recommends python3-pip \
-    && pip3 install --no-cache-dir --break-system-packages \
-        google-api-python-client \
-        google-auth \
-        google-auth-httplib2 \
-        google-auth-oauthlib \
-    && rm -rf /var/lib/apt/lists/*
 
 # Install OpenClaw from npm (pre-built, ~30-60s instead of ~12min source build)
 # Install to default /usr/local prefix BEFORE setting NPM_CONFIG_PREFIX to /data
