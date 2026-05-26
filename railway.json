@@ -1,11 +1,11 @@
-{
+{ 
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "DOCKERFILE",
     "dockerfilePath": "Dockerfile"
   },
   "deploy": {
-    "startCommand": "bash -c 'apt-get install -y --no-install-recommends python3-pip -qq 2>&1 | tail -1; pip3 install --break-system-packages -q google-api-python-client google-auth google-auth-httplib2 google-auth-oauthlib; export PLAYWRIGHT_BROWSERS_PATH=/data/.playwright; CHROME=$(find /data/.playwright -name chrome -type f 2>/dev/null | head -1); if [ -z \"$CHROME\" ] && ! command -v chromium &>/dev/null; then echo Installing Chromium to volume...; PW=$(node -e \"try{console.log(require(\\x27/usr/local/lib/node_modules/playwright-core/package.json\\x27).version)}catch(e){console.log(\\x27latest\\x27)}\" 2>/dev/null || echo latest); npx playwright@$PW install --with-deps chromium 2>&1 | tail -5; CHROME=$(find /data/.playwright -name chrome -type f 2>/dev/null | head -1); [ -n \"$CHROME\" ] && ln -sf \"$CHROME\" /usr/local/bin/chromium; fi; exec /entrypoint.sh'",
+    "startCommand": "bash -c 'pip3 install --break-system-packages -q google-api-python-client google-auth google-auth-httplib2 google-auth-oauthlib 2>/dev/null; PW=$(node -e \"try{console.log(require(\\x27/usr/local/lib/node_modules/openclaw/node_modules/playwright-core/package.json\\x27).version)}catch(e){console.log(\\x27latest\\x27)}\" 2>/dev/null || echo latest); npx playwright@$PW install-deps chromium 2>&1 | tail -2; export PLAYWRIGHT_BROWSERS_PATH=/data/.playwright; CHROME=$(find /data/.playwright -name chrome -type f 2>/dev/null | head -1); if [ -z \"$CHROME\" ]; then echo Installing Chromium...; npx playwright@$PW install chromium 2>&1 | tail -3; CHROME=$(find /data/.playwright -name chrome -type f 2>/dev/null | head -1); fi; [ -n \"$CHROME\" ] && ln -sf \"$CHROME\" /usr/local/bin/chromium; exec /entrypoint.sh'",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 5,
     "healthcheckPath": "/health",
