@@ -39,13 +39,30 @@ ARG SIGNAL_CLI_VERSION=0.13.24
 # - ca-certificates: HTTPS requests
 # - git, python3, make, g++: required for npm install -g (in-app upgrades)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    tini \
+     tini \
     curl \
     ca-certificates \
     git \
     python3 \
+    python3-pip \
     make \
     g++ \
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libdbus-1-3 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    libatspi2.0-0 \
+    libxshmfence1 \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -103,19 +120,15 @@ exec node /usr/local/lib/node_modules/openclaw/dist/entry.js "$@"\n' > /opt/open
 # Matches the playwright-core version that OpenClaw depends on
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 RUN if [ "$INSTALL_BROWSER" = "true" ]; then \
-      PW_VER=$(node -e "try{console.log(require('/usr/local/lib/node_modules/openclaw/node_modules/playwright-core/package.json').version)}catch(e){console.log('latest')}" 2>/dev/null) && \
+     PW_VER=$(node -e "try{console.log(require('/usr/local/lib/node_modules/openclaw/node_modules/playwright-core/package.json').version)}catch(e){console.log('latest')}" 2>/dev/null) && \
       echo "Installing playwright@${PW_VER} chromium..." && \
-      npx -y playwright@${PW_VER} install --with-deps chromium && \
+      PLAYWRIGHT_SKIP_BROWSER_GC=1 \
+      npx -y playwright@${PW_VER} install chromium && \
       chmod -R o+rx /ms-playwright && \
       CHROME_BIN=$(find /ms-playwright -name "chrome" -type f \( -path "*/chrome-linux/*" -o -path "*/chrome-linux64/*" \) 2>/dev/null | head -1) && \
       if [ -n "$CHROME_BIN" ]; then \
-        ln -sf "$CHROME_BIN" /usr/local/bin/chromium && \
-        echo "Symlinked $CHROME_BIN -> /usr/local/bin/chromium"; \
-      else \
-        echo "WARNING: Playwright chrome binary not found for symlink"; \
+        ln -sf "$CHROME_BIN" /usr/local/bin/chromium; \
       fi; \
-    else \
-      echo "Skipping Playwright/Chromium (set INSTALL_BROWSER=true to enable)"; \
     fi
 
 WORKDIR /app
