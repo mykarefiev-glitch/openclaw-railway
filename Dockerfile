@@ -50,7 +50,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install Python Google Drive API libraries
 RUN apt-get update && apt-get install -y --no-install-recommends python3-pip \
-    && pip3 install --no-cache-dir \
+    && pip3 install --no-cache-dir --break-system-packages \
         google-api-python-client \
         google-auth \
         google-auth-httplib2 \
